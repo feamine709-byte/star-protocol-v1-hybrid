@@ -1,0 +1,43 @@
+﻿[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "star-protocol-v1-hybrid"
+version = "1.0.0"
+description = "Star Protocol V1: Experimental Hybrid Local Yes/No Gatekeeper for Antigravity & MCP"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "AMiNE ER7", email = "amine.er7@users.noreply.github.com"}
+]
+keywords = ["antigravity", "mcp", "gatekeeper", "token-optimization", "onnx", "agentic-ai", "hybrid-ai"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence"
+]
+dependencies = [
+    "numpy>=1.24.0",
+    "onnxruntime>=1.16.0",
+    "tokenizers>=0.15.0"
+]
+
+[project.scripts]
+star-v1 = "cli:main"
+
+[tool.setuptools]
+py-modules = ["cli", "laya_model", "scanner"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["model*"]
+
+[tool.setuptools.package-data]
+"*" = ["model/*.onnx", "model/*.json"]
