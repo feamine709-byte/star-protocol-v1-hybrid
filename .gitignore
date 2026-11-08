@@ -1,4 +1,4 @@
-﻿# Byte-compiled / optimized / DLL files
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
@@ -50,6 +50,5 @@ runtime_state.json
 .DS_Store
 Thumbs.db
 
-# Local user configs / licenses
-.tokenshield/
-license.json
+# Local user configs
+.star-protocol/
