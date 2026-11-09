@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 import json
 import re
@@ -11,8 +11,8 @@ CACHE_FILE = os.path.join(BASE_DIR, "installed_tools.json")
 
 class ToolDiscoveryScanner:
     """
-    فاحص ديناميكي شامل لاكتشاف جميع أدوات MCP ومهارات Agentic Skills
-    في بيئات Cursor, Claude Code, و Google Antigravity.
+    Comprehensive dynamic scanner to discover active MCP tools and Agentic Skills
+    across Cursor, Claude Code, and Google Antigravity environments.
     """
     def __init__(self, user_home: str = None):
         self.user_home = user_home or os.path.expanduser("~")
@@ -23,23 +23,23 @@ class ToolDiscoveryScanner:
         self.discovered_skills = {}
 
     def scan_all(self) -> dict:
-        """تشغيل المسح الشامل وحفظ النتائج في الكاش."""
+        """Execute full discovery scan and cache results."""
         start_time = time.perf_counter()
         
-        # 1. فحص مسارات Cursor MCP
+        # 1. Scan Cursor MCP configuration paths
         self._scan_cursor_configs()
         
-        # 2. فحص مسارات Claude Code MCP
+        # 2. Scan Claude Code MCP configuration paths
         self._scan_claude_configs()
         
-        # 3. فحص مسارات Antigravity MCP
+        # 3. Scan Google Antigravity MCP configuration paths
         self._scan_antigravity_mcp_configs()
         self._scan_antigravity_mcp_directory()
         
-        # 4. فحص مسارات SKILL.md
+        # 4. Scan SKILL.md definition paths
         self._scan_skills_directories()
 
-        # بناء الكتالوج الموحد
+        # Build unified tools catalog
         catalog = self._compile_catalog()
         scan_duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
         
@@ -51,14 +51,14 @@ class ToolDiscoveryScanner:
             "total_entities": len(self.discovered_mcp) + len(self.discovered_skills)
         }
 
-        # حفظ الكاش المحلي فائق السرعة
+        # Save high-speed local cache
         with open(CACHE_FILE, "w", encoding="utf-8") as f:
             json.dump(catalog, f, ensure_ascii=False, indent=2)
 
         return catalog
 
     def _scan_cursor_configs(self):
-        """فحص ملفات إعدادات Cursor MCP"""
+        """Scan Cursor MCP configuration files."""
         cursor_paths = [
             os.path.join(self.user_home, ".cursor", "mcp.json"),
             os.path.join(self.appdata, "Cursor", "User", "globalStorage", "rooveterinaryinc.roo-cline", "settings", "cline_mcp_settings.json"),
@@ -87,7 +87,7 @@ class ToolDiscoveryScanner:
                     pass
 
     def _scan_claude_configs(self):
-        """فحص ملفات إعدادات Claude Code MCP"""
+        """Scan Claude Code MCP configuration files."""
         claude_paths = [
             os.path.join(self.user_home, ".claude.json"),
             os.path.join(self.user_home, ".claude", "config.json"),
@@ -116,7 +116,7 @@ class ToolDiscoveryScanner:
                     pass
 
     def _scan_antigravity_mcp_configs(self):
-        """فحص ملفات Antigravity MCP Configs"""
+        """Scan Google Antigravity MCP configuration files."""
         ag_paths = [
             os.path.join(self.user_home, ".gemini", "mcp.json"),
             os.path.join(self.user_home, ".gemini", "antigravity", "mcp_config.json"),
@@ -145,7 +145,7 @@ class ToolDiscoveryScanner:
                     pass
 
     def _scan_antigravity_mcp_directory(self):
-        """فحص مجلد خوادم MCP في Antigravity لاستخراج الأدوات وأوصافها بالتفصيل"""
+        """Scan Antigravity MCP servers directory to extract detailed tools and schemas."""
         mcp_base = os.path.join(self.user_home, ".gemini", "antigravity", "mcp")
         if not os.path.isdir(mcp_base):
             return
@@ -180,11 +180,11 @@ class ToolDiscoveryScanner:
                 except Exception:
                     pass
 
-            # تحديد فئة السيرفر
+            # Classify server category
             category = self._categorize_server(sname)
             
             summary_desc = instructions_preview or "; ".join(descriptions) or f"MCP Server providing {len(sub_tools)} tools"
-            # تنظيف الوصف
+            # Clean description string
             summary_desc = re.sub(r"\s+", " ", summary_desc)[:250]
 
             self.discovered_mcp[sname] = {
@@ -201,7 +201,7 @@ class ToolDiscoveryScanner:
             }
 
     def _scan_skills_directories(self):
-        """فحص مجلدات SKILL.md واستخراج بطاقات الهوية"""
+        """Scan SKILL.md directories and extract identity metadata."""
         skill_roots = [
             os.path.join(self.user_home, ".gemini", "config", "skills"),
             os.path.join(self.user_home, ".gemini", "config", "plugins"),
@@ -232,7 +232,7 @@ class ToolDiscoveryScanner:
 
     @staticmethod
     def _parse_skill_md(fpath: str) -> tuple:
-        """استخراج الاسم والوصف من YAML frontmatter لملف SKILL.md"""
+        """Extract name and description from SKILL.md YAML frontmatter."""
         try:
             with open(fpath, "r", encoding="utf-8") as f:
                 content = f.read(8192)
@@ -301,31 +301,31 @@ class ToolDiscoveryScanner:
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("[*] تشغيل Auto-Discovery Scanner لفحص الأدوات والمهارات في النظام...")
+    print("[*] Running Auto-Discovery Scanner for active MCP tools and Agentic Skills...")
     print("=" * 70)
 
     scanner = ToolDiscoveryScanner()
     catalog = scanner.scan_all()
     meta = catalog["metadata"]
 
-    print(f"\n[+] اكتمل المسح في: {meta['scan_duration_ms']} ms")
-    print(f"[+] عدد خوادم MCP المكتشفة: {meta['total_mcp_servers']}")
-    print(f"[+] عدد المهارات (Skills) المكتشفة: {meta['total_skills']}")
-    print(f"[+] الإجمالي الكلي للكائنات: {meta['total_entities']}")
-    print(f"[+] تم حفظ الكاش في: {CACHE_FILE}\n")
+    print(f"\n[+] Scan completed in: {meta['scan_duration_ms']} ms")
+    print(f"[+] Discovered MCP servers: {meta['total_mcp_servers']}")
+    print(f"[+] Discovered Skills: {meta['total_skills']}")
+    print(f"[+] Total registered entities: {meta['total_entities']}")
+    print(f"[+] Cache saved to: {CACHE_FILE}\n")
 
     print("=" * 70)
-    print("قائمة خوادم MCP المكتشفة (MCP Servers):")
+    print("Discovered MCP Servers:")
     print("-" * 70)
     for s_id, s in catalog["mcp_servers"].items():
         cnt = s.get("tools_count", len(s.get("sub_tools", [])))
-        print(f" • [{s_id:<24}] | الفئة: {s['category']:<18} | الأدوات: {cnt:3d} | المصدر: {s['source']}")
+        print(f" • [{s_id:<24}] | Category: {s['category']:<18} | Tools: {cnt:3d} | Source: {s['source']}")
 
     print("\n" + "=" * 70)
-    print("عينة من مهارات Agentic Skills المكتشفة (Sample of 56 Skills):")
+    print("Sample of Discovered Agentic Skills:")
     print("-" * 70)
     sample_skills = list(catalog["skills"].items())[:12]
     for sk_id, sk in sample_skills:
-        print(f" • [{sk_id:<32}] | الفئة: {sk['category']:<18} | {sk['description'][:50]}...")
-    print(f" ... و {len(catalog['skills']) - len(sample_skills)} مهارة إضافية مسجلة بالكامل في installed_tools.json")
+        print(f" • [{sk_id:<32}] | Category: {sk['category']:<18} | {sk['description'][:50]}...")
+    print(f" ... and {len(catalog['skills']) - len(sample_skills)} additional skills fully registered in installed_tools.json")
     print("=" * 70)

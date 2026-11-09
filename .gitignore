@@ -1,7 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*$py.class
+*.class
 
 # C extensions
 *.so
@@ -50,5 +50,6 @@ runtime_state.json
 .DS_Store
 Thumbs.db
 
-# Local user configs
+# Local user configs & caches
 .star-protocol/
+installed_tools.json

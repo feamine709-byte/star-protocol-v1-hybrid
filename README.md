@@ -1,4 +1,4 @@
-﻿# Star Protocol V1: Experimental Hybrid Local Yes/No Gatekeeper for Antigravity & MCP
+# Star Protocol V1: Experimental Hybrid Local Yes/No Gatekeeper for Antigravity & MCP
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -87,7 +87,7 @@ The insights and lessons gathered from this V1 Python experiment directly shaped
 ├── cli.py                 # Interactive & benchmark CLI interface
 ├── laya_model.py          # Core INT8 ONNX inference engine & schema filter
 ├── scanner.py             # Automatic MCP and Agentic Skill discovery scanner
-├── installed_tools.json   # Cached registry of discovered MCP tools & schemas
+├── installed_tools.json   # Auto-generated local cache (created by scanner.py, gitignored)
 ├── pyproject.toml         # Package configuration and dependencies
 ├── LICENSE                # Official MIT License
 ├── README.md              # Project documentation

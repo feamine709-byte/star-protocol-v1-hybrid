@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Laya INT8 ONNX Routing & Dynamic MCP Schema Shield Engine (Enterprise Grade)
+Star Protocol V1: Laya INT8 ONNX Routing & Dynamic MCP Schema Shield Engine (Open Source MIT)
 - Host Tools Immunity: Built-in agent tools (Bash, Read, Edit, Write, Grep, Glob, etc.) are NEVER stripped.
 - 100% Dynamic Schema Tokenization, Morphological Synonym Bridging & IDF Weighting.
 - Anthropic Prompt Cache Preservation: Deterministic tool sorting (Host tools alphabetically, then MCP tools alphabetically)
@@ -36,9 +36,9 @@ PROMPT_CACHE_MAX_SIZE = 256
 SESSION_CACHE_MAX_SIZE = 128
 
 CLASS_MAPPING = {
-    0: {"name": "no_tool", "desc": "شرح نظري / مفاهيمي"},
-    1: {"name": "coding_skill", "desc": "كود برمجي نقي وخوارزميات"},
-    2: {"name": "mcp_tool", "desc": "تنفيذ أوامر طرفية وأدوات MCP"}
+    0: {"name": "no_tool", "desc": "Theoretical / Conceptual Explanation (Zero Tools)"},
+    1: {"name": "coding_skill", "desc": "Pure Code Logic & Algorithms (No Terminal/MCP)"},
+    2: {"name": "mcp_tool", "desc": "Terminal Execution & External MCP Tool Operations"}
 }
 
 # ==============================================================================
@@ -692,7 +692,7 @@ class LayaEngine:
                     "confidence": conf,
                     "latency_ms": total_ms,
                     "in_memory_lookup_ms": mem_info["in_memory_lookup_ms"],
-                    "action": f"🛡️ [حجب تام] ({conf}%): حجب جميع الـ {self.total_entities} أداة ومهارة MCP"
+                    "action": f"🛡️ [Zero-Tool Shield] ({conf}%): Pruning all {self.total_entities} MCP tools and skills (0 tokens wasted)"
                 }
                 return self._store_in_cache(cache_key, res) if use_cache else res
 
@@ -725,9 +725,9 @@ class LayaEngine:
                 total_ms = round((time.perf_counter() - t_infer0) * 1000.0, 2)
 
                 reason_tag = (
-                    f"ثقة النموذج ({conf}% < 75%)"
+                    f"Model confidence ({conf}% < 75%)"
                     if is_low_confidence and not is_ambiguous_hybrid
-                    else f"طلب هجين/مركب (كود + تنفيذ، ثقة {conf}%)"
+                    else f"Hybrid query (code + execution, confidence {conf}%)"
                 )
 
                 res = {
@@ -737,7 +737,7 @@ class LayaEngine:
                     "fail_open_triggered": True,
                     "needs_tool": True,
                     "category": intent["category"],
-                    "description": f"شك آمن ({reason_tag}) ⬅️ تمرير الأدوات المشتبه بها دون عرقلة",
+                    "description": f"Fail-open safeguard ({reason_tag}) -> Passing candidate tools without disruption",
                     "active_mcp_servers": candidate_mcp,
                     "active_skills": candidate_skills[:5],
                     "active_tools_list": candidate_mcp + candidate_skills[:5],
@@ -746,8 +746,8 @@ class LayaEngine:
                     "latency_ms": total_ms,
                     "in_memory_lookup_ms": mem_info["in_memory_lookup_ms"],
                     "action": (
-                        f"🔓 [Fail-Open الآمن] ({reason_tag}): تمرير {len(candidate_mcp)} خادم MCP "
-                        f"({candidate_mcp}) + {len(candidate_skills[:5])} مهارة، مع حجب {shielded_count} أداة بعيدة!"
+                        f"🔓 [Fail-Open Safe Mode] ({reason_tag}): Passing {len(candidate_mcp)} candidate MCP servers "
+                        f"({candidate_mcp}) + {len(candidate_skills[:5])} skills, pruning {shielded_count} distant tools"
                     )
                 }
                 return self._store_in_cache(cache_key, res) if use_cache else res
@@ -770,7 +770,7 @@ class LayaEngine:
                     "confidence": conf,
                     "latency_ms": total_ms,
                     "in_memory_lookup_ms": mem_info["in_memory_lookup_ms"],
-                    "action": f"🛡️ [حجب تام] ثقة عالية ({conf}%): حجب جميع الـ {self.total_entities} أداة ومهارة (0 توكنز مهدرة)"
+                    "action": f"🛡️ [Zero-Tool Shield] High confidence ({conf}%): Pruning all {self.total_entities} tools and skills (0 tokens wasted)"
                 }
                 return self._store_in_cache(cache_key, res) if use_cache else res
 
@@ -792,7 +792,7 @@ class LayaEngine:
                     "confidence": conf,
                     "latency_ms": total_ms,
                     "in_memory_lookup_ms": mem_info["in_memory_lookup_ms"],
-                    "action": f"🛡️ [كود نقي] ثقة عالية ({conf}%): حجب كافة خوادم MCP مع بقاء أدوات المضيف الأساسية"
+                    "action": f"🛡️ [Pure Code Passthrough] High confidence ({conf}%): Pruning all MCP servers while retaining host tools"
                 }
                 return self._store_in_cache(cache_key, res) if use_cache else res
 
@@ -811,7 +811,7 @@ class LayaEngine:
                     "fail_open_triggered": False,
                     "needs_tool": True,
                     "category": "mcp_tool",
-                    "description": f"مهمة متسلسلة ({' + '.join(mem_info['matched_labels'])})",
+                    "description": f"Multi-step compound task ({' + '.join(mem_info['matched_labels'])})",
                     "active_mcp_servers": active_mcp,
                     "active_skills": active_skills,
                     "active_tools_list": active_mcp + active_skills,
@@ -819,7 +819,7 @@ class LayaEngine:
                     "confidence": conf,
                     "latency_ms": total_ms,
                     "in_memory_lookup_ms": mem_info["in_memory_lookup_ms"],
-                    "action": f"🔗 [مهارات متسلسلة Targeted Toolset]: السماح بـ {active_mcp} معاً، وحجب {shielded_count} أداة بعيدة!"
+                    "action": f"🔗 [Targeted Toolset]: Activating {active_mcp} together, pruning {shielded_count} distant tools"
                 }
                 return self._store_in_cache(cache_key, res) if use_cache else res
 
@@ -854,7 +854,7 @@ class LayaEngine:
                 "confidence": conf,
                 "latency_ms": total_ms,
                 "in_memory_lookup_ms": mem_info["in_memory_lookup_ms"],
-                "action": f"🎯 [توجيه حصري دقيق]: تفعيل [{best_tool_id}] فقط وحجب {shielded_count} أداة أخرى تلقائياً!"
+                "action": f"🎯 [Single Tool Precision]: Activating [{best_tool_id}] only and auto-pruning {shielded_count} other tools"
             }
             return self._store_in_cache(cache_key, res) if use_cache else res
 
